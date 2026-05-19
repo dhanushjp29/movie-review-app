@@ -1,18 +1,14 @@
 import { useEffect, useState } from "react";
 import { fetchMovies } from "../services/tmdb";
+import { isAbortError } from "../utils/isAbortError";
 
-const isAbortError = (err) =>
-  err?.code === "ERR_CANCELED" ||
-  err?.name === "CanceledError" ||
-  err?.name === "AbortError";
-
-export const useMovies = (filters, retryKey = 0) => {
+export const useMovies = (filters, page = 1, retryKey = 0) => {
   const [movies, setMovies] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const controller = new AbortController();
     let active = true;
 
     const load = async () => {
@@ -20,9 +16,10 @@ export const useMovies = (filters, retryKey = 0) => {
       setError(null);
 
       try {
-        const data = await fetchMovies(filters, controller.signal);
+        const data = await fetchMovies(filters, page);
         if (!active) return;
-        setMovies(data);
+        setMovies(data.movies);
+        setTotalPages(data.totalPages);
       } catch (err) {
         if (!active || isAbortError(err)) return;
         setError(
@@ -31,6 +28,7 @@ export const useMovies = (filters, retryKey = 0) => {
             "Failed to load movies"
         );
         setMovies([]);
+        setTotalPages(1);
       } finally {
         if (active) setLoading(false);
       }
@@ -42,9 +40,8 @@ export const useMovies = (filters, retryKey = 0) => {
     return () => {
       active = false;
       clearTimeout(timer);
-      controller.abort();
     };
-  }, [filters, retryKey]);
+  }, [filters, page, retryKey]);
 
-  return { movies, loading, error };
+  return { movies, totalPages, loading, error };
 };

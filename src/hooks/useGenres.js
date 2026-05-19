@@ -6,14 +6,22 @@ export const useGenres = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let active = true;
 
     fetchGenres()
-      .then(setGenres)
-      .catch(() => setGenres([]))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (active) setGenres(data);
+      })
+      .catch(() => {
+        if (active) setGenres([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-    return () => controller.abort();
+    return () => {
+      active = false;
+    };
   }, []);
 
   return { genres, loading };

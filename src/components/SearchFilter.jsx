@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
 import { releaseYears } from "../utils/years";
+import { movieLanguages } from "../utils/languages";
 import CustomSelect from "./CustomSelect";
+import Skeleton from "./Skeleton";
 
 const ratingOptions = [
   { value: 0, label: "Any Rating" },
@@ -17,7 +19,9 @@ const SearchFilter = ({
   resetFilters,
   hasActiveFilters,
   resultCount,
+  resultLoading = false,
   genres,
+  genresLoading = false,
 }) => {
   const genreOptions = useMemo(
     () => [
@@ -54,8 +58,8 @@ const SearchFilter = ({
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="relative sm:col-span-2 lg:col-span-1">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="relative sm:col-span-2 xl:col-span-2">
           <FaSearch className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-subtle" />
           <input
             type="search"
@@ -66,13 +70,26 @@ const SearchFilter = ({
           />
         </div>
 
+        {genresLoading ? (
+          <Skeleton className="h-[42px] w-full rounded-xl" />
+        ) : (
+          <CustomSelect
+            searchable
+            ariaLabel="Filter by genre"
+            value={filters.genre}
+            onChange={(val) => updateFilter("genre", val)}
+            options={genreOptions}
+            placeholder="All Genres"
+          />
+        )}
+
         <CustomSelect
           searchable
-          ariaLabel="Filter by genre"
-          value={filters.genre}
-          onChange={(val) => updateFilter("genre", val)}
-          options={genreOptions}
-          placeholder="All Genres"
+          ariaLabel="Filter by language"
+          value={filters.language}
+          onChange={(val) => updateFilter("language", val)}
+          options={movieLanguages}
+          placeholder="All Languages"
         />
 
         <CustomSelect
@@ -94,11 +111,23 @@ const SearchFilter = ({
         />
       </div>
 
-      <p className="mt-4 text-sm text-subtle">
-        Showing{" "}
-        <span className="font-semibold text-cinema-accent">{resultCount}</span>{" "}
-        {resultCount === 1 ? "movie" : "movies"}
-      </p>
+      <div className="mt-4 text-sm text-subtle">
+        {resultLoading ? (
+          <span className="inline-flex items-center gap-2">
+            Showing{" "}
+            <Skeleton as="span" className="inline-block h-4 w-8 rounded-md" />{" "}
+            movies
+          </span>
+        ) : (
+          <>
+            Showing{" "}
+            <span className="font-semibold text-cinema-accent">
+              {resultCount}
+            </span>{" "}
+            {resultCount === 1 ? "movie" : "movies"}
+          </>
+        )}
+      </div>
     </section>
   );
 };

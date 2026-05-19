@@ -2,6 +2,11 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FaChevronDown, FaSearch } from "react-icons/fa";
 
+const getHighlightIndexForValue = (opts, val) => {
+  const idx = opts.findIndex((opt) => String(opt.value) === String(val));
+  return idx >= 0 ? idx : 0;
+};
+
 const CustomSelect = ({
   value,
   onChange,
@@ -39,7 +44,20 @@ const CustomSelect = ({
 
   const closeMenu = () => {
     setOpen(false);
+    setSearch("");
+    setHighlightedIndex(0);
     triggerRef.current?.focus();
+  };
+
+  const openMenu = () => {
+    setSearch("");
+    setHighlightedIndex(getHighlightIndexForValue(options, value));
+    setOpen(true);
+  };
+
+  const toggleMenu = () => {
+    if (open) closeMenu();
+    else openMenu();
   };
 
   const selectOption = (opt) => {
@@ -60,6 +78,11 @@ const CustomSelect = ({
       if (next >= filteredOptions.length) return 0;
       return next;
     });
+  };
+
+  const handleSearchChange = (nextSearch) => {
+    setSearch(nextSearch);
+    setHighlightedIndex(0);
   };
 
   const handleListKeyDown = (e) => {
@@ -94,10 +117,15 @@ const CustomSelect = ({
   };
 
   const handleTriggerKeyDown = (e) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+    if (
+      e.key === "ArrowDown" ||
+      e.key === "ArrowUp" ||
+      e.key === "Enter" ||
+      e.key === " "
+    ) {
       e.preventDefault();
       if (!open) {
-        setOpen(true);
+        openMenu();
         return;
       }
       handleListKeyDown(e);
@@ -114,29 +142,11 @@ const CustomSelect = ({
     }
   }, [open, searchable]);
 
-  useEffect(() => {
-    if (!open) {
-      setSearch("");
-      setHighlightedIndex(0);
-      return;
-    }
-
-    const selectedIndex = filteredOptions.findIndex(
-      (opt) => String(opt.value) === String(value)
-    );
-    setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
-  }, [open, filteredOptions, value]);
-
-  useEffect(() => {
-    if (searchable && open) {
-      setHighlightedIndex(0);
-    }
-  }, [search, searchable, open]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!open) return;
     const el = optionRefs.current[highlightedIndex];
     el?.scrollIntoView({ block: "nearest" });
-  }, [highlightedIndex, filteredOptions]);
+  }, [highlightedIndex, filteredOptions, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -148,7 +158,7 @@ const CustomSelect = ({
       ) {
         return;
       }
-      setOpen(false);
+      closeMenu();
     };
 
     const handleScrollOrResize = () => updatePosition();
@@ -183,7 +193,7 @@ const CustomSelect = ({
                 ref={searchRef}
                 type="search"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search..."
                 className="select-search-input"
                 onClick={(e) => e.stopPropagation()}
@@ -236,7 +246,7 @@ const CustomSelect = ({
         aria-label={ariaLabel}
         aria-expanded={open}
         aria-haspopup="listbox"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={toggleMenu}
         onKeyDown={handleTriggerKeyDown}
         className={`select-trigger w-full ${open ? "select-trigger-open" : ""}`}
       >

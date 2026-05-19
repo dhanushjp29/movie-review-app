@@ -4,14 +4,17 @@ import {
   FaCalendarAlt,
   FaClock,
   FaFilm,
-  FaUser,
-  FaUserTie,
 } from "react-icons/fa";
 import { useRatings } from "../hooks/useRatings";
 import { useMovieDetails } from "../hooks/useMovieDetails";
 import StarRating from "../components/StarRating";
-import LoadingSpinner from "../components/LoadingSpinner";
+import MovieTrailer from "../components/MovieTrailer";
+import CastSection from "../components/CastSection";
+import MovieDetailsSkeleton from "../components/MovieDetailsSkeleton";
 import ErrorMessage from "../components/ErrorMessage";
+
+const mainClass =
+  "mx-auto max-w-7xl flex-1 overflow-x-hidden px-4 py-8 sm:px-6 sm:py-10";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -20,15 +23,15 @@ const MovieDetails = () => {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-7xl flex-1 px-4 py-16">
-        <LoadingSpinner label="Loading movie details..." />
+      <main className={mainClass}>
+        <MovieDetailsSkeleton />
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="mx-auto max-w-7xl flex-1 px-4 py-16">
+      <main className={`${mainClass} py-16`}>
         <ErrorMessage
           message={error}
           onRetry={() => window.location.reload()}
@@ -48,7 +51,7 @@ const MovieDetails = () => {
 
   if (!movie) {
     return (
-      <main className="mx-auto max-w-7xl flex-1 px-4 py-16 text-center">
+      <main className={`${mainClass} py-16 text-center`}>
         <h1 className="text-2xl font-bold text-heading">Movie not found</h1>
         <Link
           to="/"
@@ -65,7 +68,7 @@ const MovieDetails = () => {
   const userRating = getUserRating(movie.id);
 
   return (
-    <main className="mx-auto max-w-7xl flex-1 px-4 py-8 sm:px-6 sm:py-10 animate-fade-in">
+    <main className={`${mainClass} animate-fade-in`}>
       <Link
         to="/"
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted transition hover:text-cinema-accent"
@@ -85,7 +88,7 @@ const MovieDetails = () => {
           </div>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <h1 className="font-display text-3xl font-bold text-heading sm:text-4xl lg:text-5xl">
             {movie.title}
           </h1>
@@ -106,6 +109,13 @@ const MovieDetails = () => {
           </div>
 
           <div className="surface-panel mt-8 p-6">
+            <MovieTrailer
+              key={movie.id}
+              trailerKey={movie.trailerKey}
+              title={movie.title}
+              year={movie.year}
+              poster={movie.poster}
+            />
             <h2 className="text-lg font-semibold text-heading">Your Rating</h2>
             <p className="mt-1 text-sm text-subtle">
               Click stars to rate this movie (1–5)
@@ -144,22 +154,10 @@ const MovieDetails = () => {
             <p className="mt-3 leading-relaxed text-muted">{movie.plot}</p>
           </section>
 
-          <section className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="surface-info p-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-heading">
-                <FaUserTie className="text-cinema-accent" />
-                Director
-              </h3>
-              <p className="mt-2 text-muted">{movie.director}</p>
-            </div>
-            <div className="surface-info p-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-heading">
-                <FaUser className="text-cinema-accent" />
-                Cast
-              </h3>
-              <p className="mt-2 text-muted">{movie.cast}</p>
-            </div>
-          </section>
+          <CastSection
+            director={movie.director}
+            castMembers={movie.castMembers}
+          />
         </div>
       </div>
     </main>

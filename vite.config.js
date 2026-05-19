@@ -7,6 +7,11 @@ const tmdbProxy = {
     changeOrigin: true,
     rewrite: (path) => path.replace(/^\/api\/tmdb/, ""),
   },
+  "/api/youtube-search": {
+    target: "https://pipedapi.kavin.rocks",
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/api\/youtube-search/, ""),
+  },
 };
 
 export default defineConfig({

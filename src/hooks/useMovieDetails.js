@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchMovieById } from "../services/tmdb";
-
-const isAbortError = (err) =>
-  err?.code === "ERR_CANCELED" ||
-  err?.name === "CanceledError" ||
-  err?.name === "AbortError";
+import { isAbortError } from "../utils/isAbortError";
 
 export const useMovieDetails = (id) => {
   const [movie, setMovie] = useState(null);
@@ -14,7 +10,6 @@ export const useMovieDetails = (id) => {
   useEffect(() => {
     if (!id) return;
 
-    const controller = new AbortController();
     let active = true;
 
     const load = async () => {
@@ -22,7 +17,7 @@ export const useMovieDetails = (id) => {
       setError(null);
 
       try {
-        const data = await fetchMovieById(id, controller.signal);
+        const data = await fetchMovieById(id);
         if (!active) return;
         setMovie(data);
       } catch (err) {
@@ -42,7 +37,6 @@ export const useMovieDetails = (id) => {
 
     return () => {
       active = false;
-      controller.abort();
     };
   }, [id]);
 

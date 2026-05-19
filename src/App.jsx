@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+import { MovieFiltersProvider } from "./context/MovieFiltersProvider";
 import { RatingProvider } from "./context/RatingProvider";
 import { ThemeProvider } from "./context/ThemeProvider";
 import Navbar from "./components/Navbar";
@@ -11,6 +12,7 @@ const App = () => {
   return (
     <ThemeProvider>
       <RatingProvider>
+        <MovieFiltersProvider>
         <CursorGlow />
         <div className="relative z-10 flex min-h-screen flex-col">
           <Navbar />
@@ -20,6 +22,7 @@ const App = () => {
           </Routes>
           <Footer />
         </div>
+        </MovieFiltersProvider>
       </RatingProvider>
     </ThemeProvider>
   );
