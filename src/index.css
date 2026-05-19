@@ -1,0 +1,311 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root,
+  html.theme-dark {
+    color-scheme: dark;
+
+    --color-cinema-950: #0a0a0f;
+    --color-cinema-900: #12121a;
+    --color-cinema-800: #1a1a26;
+    --color-cinema-700: #252536;
+
+    --text-heading: #ffffff;
+    --text-body: #f3f4f6;
+    --text-muted: #9ca3af;
+    --text-subtle: #6b7280;
+
+    --body-gradient-1: rgba(245, 158, 11, 0.08);
+    --body-gradient-2: rgba(99, 102, 241, 0.05);
+    --scrollbar-thumb: #252536;
+    --input-bg: #1a1a26;
+    --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.35);
+    --shadow-panel: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    --shadow-nav: 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  html.theme-light {
+    color-scheme: light;
+
+    --color-cinema-950: #f5f2eb;
+    --color-cinema-900: #ffffff;
+    --color-cinema-800: #faf8f4;
+    --color-cinema-700: #e8e3d9;
+
+    --text-heading: #000000;
+    --text-body: #1a1a1a;
+    --text-muted: #262626;
+    --text-subtle: #525252;
+
+    --body-gradient-1: rgba(245, 158, 11, 0.14);
+    --body-gradient-2: rgba(217, 119, 6, 0.06);
+    --scrollbar-thumb: #d6d0c4;
+    --input-bg: #ffffff;
+    --shadow-card: 0 2px 8px rgba(28, 25, 23, 0.06),
+      0 12px 28px -8px rgba(28, 25, 23, 0.1);
+    --shadow-panel: 0 4px 12px rgba(28, 25, 23, 0.05),
+      0 20px 40px -12px rgba(245, 158, 11, 0.15);
+    --shadow-nav: 0 1px 3px rgba(28, 25, 23, 0.06);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-cinema-950);
+    color: var(--text-body);
+    background-image: radial-gradient(
+        ellipse 80% 50% at 50% -20%,
+        var(--body-gradient-1),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 100% 100%,
+        var(--body-gradient-2),
+        transparent
+      );
+    min-height: 100vh;
+    @apply antialiased;
+  }
+
+  ::selection {
+    @apply bg-cinema-accent/30;
+    color: #ffffff;
+  }
+
+  html.theme-light ::selection {
+    color: #1c1917;
+  }
+}
+
+@layer components {
+  .text-heading {
+    color: var(--text-heading);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .text-subtle {
+    color: var(--text-subtle);
+  }
+
+  .surface-nav {
+    background-color: color-mix(in srgb, var(--color-cinema-950) 92%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-cinema-700) 50%, transparent);
+    box-shadow: var(--shadow-nav);
+    @apply sticky top-0 z-50 backdrop-blur-lg;
+  }
+
+  .surface-card {
+    background-color: var(--color-cinema-900);
+    border: 1px solid color-mix(in srgb, var(--color-cinema-700) 55%, transparent);
+    box-shadow: var(--shadow-card);
+    @apply overflow-hidden rounded-xl transition-all duration-300;
+  }
+
+  html.theme-dark .surface-card {
+    background-color: color-mix(in srgb, var(--color-cinema-900) 88%, transparent);
+    @apply backdrop-blur-sm;
+  }
+
+  .surface-panel {
+    background-color: var(--color-cinema-900);
+    border: 1px solid color-mix(in srgb, var(--color-cinema-700) 50%, transparent);
+    box-shadow: var(--shadow-panel);
+    @apply overflow-visible rounded-2xl backdrop-blur-md;
+  }
+
+  html.theme-dark .surface-panel {
+    background-color: color-mix(in srgb, var(--color-cinema-900) 65%, transparent);
+  }
+
+  .surface-poster {
+    @apply overflow-hidden rounded-2xl border border-cinema-700;
+    box-shadow: var(--shadow-card);
+  }
+
+  .surface-info {
+    background-color: color-mix(in srgb, var(--color-cinema-900) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-cinema-700) 45%, transparent);
+    @apply rounded-xl;
+  }
+
+  html.theme-light .surface-info {
+    background-color: var(--color-cinema-800);
+  }
+
+  .input-themed {
+    @apply w-full rounded-xl border border-cinema-700 py-2.5 text-sm outline-none transition focus:border-cinema-accent focus:ring-1 focus:ring-cinema-accent;
+    background-color: var(--input-bg);
+    color: var(--text-body);
+  }
+
+  html.theme-light .input-themed:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
+  }
+
+  html.theme-light .input-themed::placeholder {
+    color: #a8a29e;
+  }
+
+  html.theme-dark .input-themed::placeholder {
+    @apply text-gray-500;
+  }
+
+  .select-trigger {
+    @apply flex items-center justify-between gap-2 rounded-xl border border-cinema-700 py-2.5 pl-4 pr-3 text-sm outline-none transition;
+    background-color: var(--input-bg);
+    color: var(--text-body);
+  }
+
+  .select-trigger:hover {
+    border-color: color-mix(in srgb, #f59e0b 50%, var(--color-cinema-700));
+  }
+
+  .select-trigger-open,
+  .select-trigger:focus-visible {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+  }
+
+  html.theme-light .select-trigger-open,
+  html.theme-light .select-trigger:focus-visible {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
+  }
+
+  .select-dropdown-portal {
+    z-index: 9999;
+    @apply rounded-xl border border-cinema-700 shadow-2xl;
+    background-color: var(--color-cinema-900);
+    box-shadow: var(--shadow-panel);
+  }
+
+  .select-dropdown-search {
+    @apply flex items-center gap-2 border-b border-cinema-700 px-3 py-2;
+  }
+
+  .select-search-input {
+    @apply w-full bg-transparent py-1 text-sm outline-none;
+    color: var(--text-body);
+  }
+
+  .select-search-input::placeholder {
+    color: var(--text-subtle);
+  }
+
+  .select-option {
+    @apply w-full px-4 py-2.5 text-left text-sm transition;
+    color: var(--text-body);
+  }
+
+  .select-option:hover {
+    background-color: color-mix(in srgb, #f59e0b 12%, var(--color-cinema-800));
+    color: var(--text-heading);
+  }
+
+  .select-option-active {
+    background-color: color-mix(in srgb, #f59e0b 22%, var(--color-cinema-800));
+    color: #f59e0b;
+    font-weight: 600;
+  }
+
+  html.theme-light .select-option-active {
+    color: #b45309;
+  }
+
+  .select-option-highlighted {
+    background-color: color-mix(in srgb, #f59e0b 14%, var(--color-cinema-800));
+    color: var(--text-heading);
+  }
+
+  .select-option-highlighted.select-option-active {
+    background-color: color-mix(in srgb, #f59e0b 28%, var(--color-cinema-800));
+  }
+
+  .cursor-glow {
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(245, 158, 11, 0.22) 0%,
+      rgba(245, 158, 11, 0.08) 40%,
+      transparent 70%
+    );
+    filter: blur(12px);
+    opacity: 0.85;
+  }
+
+  html.theme-light .cursor-glow {
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(
+      circle,
+      rgba(245, 158, 11, 0.42) 0%,
+      rgba(245, 158, 11, 0.2) 35%,
+      rgba(245, 158, 11, 0.06) 55%,
+      transparent 72%
+    );
+    filter: blur(16px);
+    opacity: 1;
+  }
+
+  .star-empty {
+    color: var(--text-subtle);
+  }
+
+  html.theme-light .star-empty {
+    color: #d6d3d1;
+  }
+
+  .nav-link {
+    @apply rounded-lg px-4 py-2 text-sm font-medium transition;
+  }
+
+  .nav-link-active {
+    @apply bg-cinema-accent/15 text-cinema-accent;
+  }
+
+  .nav-link-inactive {
+    color: var(--text-muted);
+  }
+
+  .nav-link-inactive:hover {
+    background-color: var(--color-cinema-800);
+    color: var(--text-heading);
+  }
+
+  .btn-ghost {
+    color: var(--text-muted);
+    @apply rounded-lg transition;
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--color-cinema-800);
+    color: var(--text-heading);
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--scrollbar-thumb);
+  }
+}
